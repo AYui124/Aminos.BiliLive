@@ -1,0 +1,151 @@
+<UserControl 
+	xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:Aminos.BiliLive.ViewModels"
+    xmlns:suki="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+    xmlns:skTheme="clr-namespace:SukiUI.Theme;assembly=SukiUI"
+    xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+    xmlns:models="clr-namespace:Aminos.BiliLive.Models"
+    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+    x:DataType="vm:LiveStatusViewModel"
+	x:Class="Aminos.BiliLive.Views.LiveStatus"
+    Loaded="OnLoaded"
+>
+	<!--<Design.DataContext>
+		<vm:LiveStatusViewModel></vm:LiveStatusViewModel>
+	</Design.DataContext>-->
+    <suki:GlassCard CornerRadius="0">
+	    <suki:BusyArea IsBusy="{Binding Loading}" Padding="10">
+		    <Grid
+                ColumnDefinitions="10, 80, *, *, 10"
+                RowDefinitions="10, 30, 30, auto, *, 90"
+		    >
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="直播状态:" VerticalAlignment="Center" />
+                <TextBlock Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="3" Text="{Binding LivingInfo.IsLiving}" HorizontalAlignment="Left" VerticalAlignment="Center" />
+				<Button 
+                    Classes="Outlined" 
+					Grid.Row="1" Grid.Column="3"
+                    Width="25" Height="25"
+                    Padding="0"
+                    ToolTip.Tip="刷新"
+                    ToolTip.Placement="Left"
+					HorizontalAlignment="Right"
+					Command="{Binding RefreshStatus}"
+				>
+                    <materialIcons:MaterialIcon Kind="RefreshCircle" />
+				</Button>
+				<TextBlock Grid.Row="2" Grid.Column="1" Text="直播间名:" VerticalAlignment="Center" />
+                <TextBlock Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="3" Text="{Binding LivingInfo.RoomName}" HorizontalAlignment="Left" VerticalAlignment="Center" />
+				<TextBlock Grid.Row="3" Grid.Column="1" Text="直播分区:" VerticalAlignment="Center" />
+			    <ComboBox
+				    Grid.Row="3"
+				    Grid.Column="2"
+				    MaxHeight="100"
+                    ItemsSource="{Binding ParentAreas}"
+                    SelectedItem="{Binding ParentArea, Mode=TwoWay}" 
+			    >
+				    <ComboBox.DataTemplates>
+					    <DataTemplate DataType="models:LabelValueOption">
+						    <TextBlock Text="{Binding Label}"></TextBlock>
+					    </DataTemplate>
+				    </ComboBox.DataTemplates>
+			    </ComboBox>
+                <ComboBox
+                    Grid.Row="3"
+                    Grid.Column="3"
+                    MaxHeight="100"
+                    ItemsSource="{Binding SubAreas}"
+                    SelectedItem="{Binding SubArea, Mode=TwoWay}" 
+                >
+                    <ComboBox.DataTemplates>
+                        <DataTemplate DataType="models:LabelValueOption">
+                            <TextBlock Text="{Binding Label}"></TextBlock>
+                        </DataTemplate>
+                    </ComboBox.DataTemplates>
+                </ComboBox>
+				<Grid 
+					Grid.Row="4"
+                    Grid.Column="1"
+					Grid.ColumnSpan="3"
+                    ColumnDefinitions="90, *, Auto"
+                    RowDefinitions="Auto, Auto"
+				>
+                    <TextBlock 
+						Grid.Row="0" Grid.Column="0"
+						Text="RTMP服务器：" VerticalAlignment="Center"
+					/>
+                    <TextBox
+                        MaxHeight="60"
+                        TextWrapping="Wrap"
+						Grid.Row="0" Grid.Column="1" 
+						Text="{Binding RtmpServer.RtmpUrl}" FontFamily="Simsun"
+						VerticalAlignment="Center"
+					/>
+					<Button 
+						Classes="Outlined" 
+						Grid.Row="0" Grid.Column="2" 
+                        Width="25" Height="25"
+                        Padding="0"
+						ToolTip.Tip="复制"
+                        ToolTip.Placement="Left"
+						Command="{Binding CopyUrlToClipboard}"
+					>
+                        <materialIcons:MaterialIcon Kind="ClipboardCheck" />
+					</Button>
+                    <TextBlock 
+						Grid.Row="1" Grid.Column="0" 
+						Text="RTMP推流码:"
+						VerticalAlignment="Center" 
+					/>
+                    <TextBox 
+						MaxHeight="100"
+						TextWrapping="Wrap"
+						Grid.Row="1" Grid.Column="1"
+						Text="{Binding RtmpServer.RtmpKey}" FontFamily="Simsun"
+						VerticalAlignment="Center" 
+					/>
+                    <Button 
+						Classes="Outlined" 
+                        Grid.Row="1" Grid.Column="2" 
+                        Width="25" Height="25"
+                        Padding="0"
+                        ToolTip.Tip="复制"
+                        ToolTip.Placement="Left"
+                        Command="{Binding CopyKeyToClipboard}"
+					>
+                        <materialIcons:MaterialIcon Kind="ClipboardCheck" />
+					</Button>
+				</Grid>
+			    <Grid 
+				    Grid.Row="5"
+				    Grid.Column="0"
+				    Grid.ColumnSpan="5"
+                    ColumnDefinitions="*, 100, 10, 100, 10"
+                    RowDefinitions="*, Auto, 10"
+			    >
+                    <Button
+						Classes="Outlined"
+						Grid.Row="1" Grid.Column="1" 
+						Command="{Binding StartLiveCommand}"
+						IsEnabled="{Binding !LivingInfo.IsLiving}"
+                        skTheme:ButtonExtensions.ShowProgress="{Binding StartLiveLoading}"
+					>
+						开始
+					</Button>
+                    <Button 
+						Classes="Outlined"
+						Grid.Row="1" Grid.Column="3" 
+						Command="{Binding EndLiveCommand}"
+                        IsEnabled="{Binding LivingInfo.IsLiving}"
+                        skTheme:ButtonExtensions.ShowProgress="{Binding StopLiveLoading}"
+					>
+						关闭
+					</Button>
+			    </Grid>
+
+		    </Grid>
+	    </suki:BusyArea>
+    </suki:GlassCard>
+</UserControl>
