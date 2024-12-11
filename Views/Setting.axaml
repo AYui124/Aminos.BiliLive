@@ -1,0 +1,48 @@
+<UserControl 
+	xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:Aminos.BiliLive.ViewModels"
+    xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+    x:Class="Aminos.BiliLive.Views.Setting"
+    x:DataType="vm:SettingViewModel"
+>
+	<!--<Design.DataContext>
+		<vm:SettingViewModel></vm:SettingViewModel>
+	</Design.DataContext>-->
+	<Grid
+		RowDefinitions="10, 50, auto, 10, auto, 10, 50, 10, auto, *, 10"
+		ColumnDefinitions="50, 100, 50, auto, *, 10"
+	>
+		<TextBlock Grid.Row="2" Grid.Column="1" Text="清理登录缓存：" VerticalAlignment="Center"></TextBlock>
+		<Button 
+			Grid.Row="2" Grid.Column="3" 
+			Command="{Binding ClearUserCache}"
+		>
+            <materialIcons:MaterialIcon Kind="Recycle" />
+		</Button>
+        <TextBlock Grid.Row="4" Grid.Column="1" Text="清理直播分区：" VerticalAlignment="Center"></TextBlock>
+        <Button 
+			Grid.Row="4" Grid.Column="3"
+			Command="{Binding ClearAreaCache}"
+		>
+            <materialIcons:MaterialIcon Kind="Recycle" />
+		</Button>
+		<TextBlock Grid.Row="6" Grid.Column="1" Text="程序版本：" VerticalAlignment="Center"></TextBlock>
+		<TextBlock
+            Grid.Row="6" Grid.Column="3"
+			Text="{Binding Version}"
+            VerticalAlignment="Center"
+        >
+		</TextBlock>
+        <TextBlock Grid.Row="8" Grid.Column="1" Text="开源项目：" VerticalAlignment="Center"></TextBlock>
+        <Button
+            Grid.Row="8" Grid.Column="3"
+            Command="{Binding GotoUrl}"
+        >
+            <materialIcons:MaterialIcon Kind="Github" />
+        </Button>
+	</Grid>
+</UserControl>
