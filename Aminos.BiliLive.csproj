@@ -15,13 +15,8 @@
 
   <ItemGroup>
     <None Remove=".gitignore" />
-    <None Remove="Assets\project-logo.ico" />
     <None Remove="LICENSE" />
     <None Remove="README.md" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Assets\project-logo.ico" />
   </ItemGroup>
 
   <ItemGroup>
