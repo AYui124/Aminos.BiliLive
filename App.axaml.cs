@@ -22,6 +22,9 @@ namespace Aminos.BiliLive
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
+                var splash = new SplashWindow();
+                splash.Show();
+                await Task.Delay(100);
                 var sc = desktop.UseInject();
                 sc.InjectServices();
                 sc.InjectViewModels();
@@ -33,6 +36,9 @@ namespace Aminos.BiliLive
                 {
                     DataContext = mainWindowViewModel
                 };
+                desktop.MainWindow.Closed += (_, __) => splash.Close();
+                desktop.MainWindow.Show();
+                splash.Close();
             }
 
             base.OnFrameworkInitializationCompleted();
