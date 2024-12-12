@@ -1,0 +1,18 @@
+<Window 
+	xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:Class="Aminos.BiliLive.SplashWindow"
+    xmlns:suki="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+    Width="700" Height="450"
+    ExtendClientAreaToDecorationsHint="True"
+    ExtendClientAreaChromeHints="NoChrome"
+    ExtendClientAreaTitleBarHeightHint="-1"
+    SystemDecorations="BorderOnly"
+    WindowStartupLocation="CenterScreen"
+    Background="Transparent"
+    ShowInTaskbar="False">
+    <Panel HorizontalAlignment="Center" VerticalAlignment="Center">
+		<suki:BusyArea IsBusy="True">
+		</suki:BusyArea>
+    </Panel>
+</Window>
