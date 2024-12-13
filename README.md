@@ -3,7 +3,9 @@ Just a tool providing the RTMP address and stream key for streaming software eve
 ## Installation
 - [Download](https://dotnet.microsoft.com/zh-cn/download/dotnet/8.0) and install __.Net8 Desktop Runtime.__
 - Download .zip from [releases](https://github.com/AYui124/Aminos.BiliLive/releases) page.
-- Notice: Release page only provided win-x64 version, for other system version, you need build it yourself. 
+- Notice:
+  1. Release page only provided win-x64 version, for other system version, you need build it yourself.
+  2. System Requirement: Win10 or above. [[Win7/8]](https://github.com/dotnet/runtime/issues/79469#issuecomment-1371202114) is not supported!
 - Just run application! 
 ## Build
 Open project in Visual Studio 2022 and publish.
