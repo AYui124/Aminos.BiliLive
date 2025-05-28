@@ -1,5 +1,5 @@
 # Aminos.BiliLive
-Just a tool providing the RTMP address and stream key for streaming software even if you do not have 100+ fans on [bilibili](https://www.bilibili.com).
+Just a tool providing the RTMP address and stream key for streaming software even if you do not have 5000+ fans on [bilibili](https://www.bilibili.com).
 ## Installation
 - [Download](https://dotnet.microsoft.com/zh-cn/download/dotnet/8.0) and install __.Net8 Desktop Runtime.__
 - Download win-x64.zip from [releases](https://github.com/AYui124/Aminos.BiliLive/releases) page.
