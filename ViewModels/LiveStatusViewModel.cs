@@ -183,6 +183,20 @@ namespace Aminos.BiliLive.ViewModels
                 .Queue();
         }
 
+        [RelayCommand]
+        public async Task ChangeRoomName()
+        {
+            await _manageLiveService.SetRoomTitleAsync(LivingInfo.RoomName);
+            _toastManager
+                .CreateToast()
+                .OfType(Avalonia.Controls.Notifications.NotificationType.Success)
+                .WithTitle("提示")
+                .WithContent("已修改直播间名!")
+                .Dismiss()
+                .After(TimeSpan.FromSeconds(1))
+                .Queue();
+        }
+
         partial void OnParentAreaChanged(LabelValueOption? oldValue, LabelValueOption newValue)
         {
             var list = _liveAreaService.GetAreas();
