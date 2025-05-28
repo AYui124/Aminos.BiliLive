@@ -66,6 +66,7 @@ namespace Aminos.BiliLive
             var vms = _serviceProvider.GetServices<ViewModelBase>();
             Loading = false;
             Pages.AddRange(vms.OrderBy(o => o.Index));
+            CurrentPage = Pages.First();
         }
 
         private void HandleChangeMenu(MinimalEventArg eventArg)

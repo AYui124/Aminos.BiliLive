@@ -79,6 +79,38 @@ namespace Aminos.BiliLive.Services
                 : BizResult<LivingInfo>.AsSuccess(livingInfo);
         }
 
+        public async Task<BizResult> SetRoomTitleAsync(string title)
+        {
+            var roomId = _userDataService.GetRoomId();
+            var cookies = _userDataService.GetCookies();
+            var csrf = _userDataService.GetCsrfToken();
+            var requestform = new Dictionary<string, string>
+            {
+                ["room_id"] = roomId,
+                ["title"] = title,
+                ["csrf_token"] = csrf,
+                ["csrf"] = csrf,
+                ["visit_id"] = ""
+            };
+            var content = new FormUrlEncodedContent(requestform);
+            var response = await _httpClientService.PostAsync("https://api.live.bilibili.com", "/room/v1/Room/update", content, cookies);
+            if (!response.IsSuccess)
+            {
+                return BizResult.AsFail(code: response.StatusCode.GetHashCode(), message: "Http通讯失败");
+            }
+            var data = response.Content;
+            if (string.IsNullOrEmpty(data))
+            {
+                return BizResult.AsFail(code: 204, message: "返回内容为空");
+            }
+            var obj = JsonSerializer.Deserialize<JsonObject>(data);
+            var code = obj?["code"]?.GetValue<int>() ?? -1;
+            var message = obj?["message"]?.GetValue<string>() ?? "";
+            return code == 0 
+                ? BizResult.AsSuccess() 
+                : BizResult.AsFail(code: code, message: message);
+        }
+
         public async Task<BizResult<RtmpInfo>> StartLiveAsync(string area)
         {
             var path = "/room/v1/Room/startLive";
