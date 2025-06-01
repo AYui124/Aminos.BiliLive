@@ -132,7 +132,7 @@ namespace Aminos.BiliLive.Services
             var requestform = new Dictionary<string, string>
             {
                 ["room_id"] = roomId,
-                ["platform"] = "web_link",
+                ["platform"] = "pc_link",
                 ["csrf_token"] = csrf,
                 ["csrf"] = csrf,
                 ["visit_id"] = ""
