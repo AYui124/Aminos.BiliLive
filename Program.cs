@@ -5,7 +5,7 @@ namespace Aminos.BiliLive
 {
     internal sealed class Program
     {
-        public const string Version = "1.1.0";
+        public const string Version = "1.1.1";
         // Initialization code. Don't use any Avalonia, third-party APIs or any
         // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
         // yet and stuff might break.
