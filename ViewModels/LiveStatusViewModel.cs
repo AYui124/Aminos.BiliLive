@@ -142,6 +142,17 @@ namespace Aminos.BiliLive.ViewModels
                 RtmpServer = result.Data;
                 await GetLiveStatusAsync();
             }
+            else
+            {
+                _toastManager
+                .CreateToast()
+                .OfType(Avalonia.Controls.Notifications.NotificationType.Success)
+                .WithTitle("提示")
+                .WithContent("失败：" + result.Message)
+                .Dismiss()
+                .After(TimeSpan.FromSeconds(3))
+                .Queue();
+            }
             StartLiveLoading = false;
         }
 
@@ -165,7 +176,7 @@ namespace Aminos.BiliLive.ViewModels
                 .WithTitle("提示")
                 .WithContent("已复制!")
                 .Dismiss()
-                .After(TimeSpan.FromSeconds(1))
+                .After(TimeSpan.FromSeconds(2))
                 .Queue();
         }
 
@@ -179,7 +190,7 @@ namespace Aminos.BiliLive.ViewModels
                 .WithTitle("提示")
                 .WithContent("已复制!")
                 .Dismiss()
-                .After(TimeSpan.FromSeconds(1))
+                .After(TimeSpan.FromSeconds(2))
                 .Queue();
         }
 
