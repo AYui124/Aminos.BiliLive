@@ -1,16 +1,20 @@
-﻿using Aminos.BiliLive.Models;
+﻿using Aminos.BiliLive.Extensions;
+using Aminos.BiliLive.Models;
+using Aminos.BiliLive.Utils;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
-using System.Text.Json.Nodes;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
-using System.Dynamic;
-using System.Net;
 using System.Web;
 using ZXing.Aztec.Internal;
+using static System.Net.WebRequestMethods;
 
 namespace Aminos.BiliLive.Services
 {
@@ -113,24 +117,22 @@ namespace Aminos.BiliLive.Services
 
         public async Task<BizResult<RtmpInfo>> StartLiveAsync(string area)
         {
+            var result = await GetLiveHimeVersionAsync();
+            if (!result.Success || result.Data == null)
+            {
+                return BizResult<RtmpInfo>.AsFail(code: result.Code, message: "无法获取直播姬版本:" + result.Message);
+            }
+
             var path = "/room/v1/Room/startLive";
-            return await PostLiveAsync(path, area);
-        }
-
-        public async Task<BizResult<RtmpInfo>> StopLiveAsync()
-        {
-            var path = "/room/v1/Room/stopLive";
-            return await PostLiveAsync(path);
-        }
-
-        private async Task<BizResult<RtmpInfo>> PostLiveAsync(string path, string area = "")
-        {
             var roomId = _userDataService.GetRoomId();
             var cookies = _userDataService.GetCookies();
             var csrf = _userDataService.GetCsrfToken();
 
             var requestform = new Dictionary<string, string>
             {
+                ["build"] = result.Data.Build,
+                ["version"] = result.Data.Version,
+                ["ts"] = $"{DateTime.Now.ToSecondTimeStamp()}",
                 ["room_id"] = roomId,
                 ["platform"] = "pc_link",
                 ["csrf_token"] = csrf,
@@ -141,7 +143,8 @@ namespace Aminos.BiliLive.Services
             {
                 requestform["area_v2"] = area;
             }
-            var content = new FormUrlEncodedContent(requestform);
+            var signed = SignTool.Sign(requestform);
+            var content = new FormUrlEncodedContent(signed);
             var response = await _httpClientService.PostAsync("https://api.live.bilibili.com", path, content, cookies);
 
             if (!response.IsSuccess)
@@ -170,6 +173,78 @@ namespace Aminos.BiliLive.Services
             };
 
             return BizResult<RtmpInfo>.AsSuccess(info);
+        }
+
+        public async Task<BizResult> StopLiveAsync()
+        {
+            var path = "/room/v1/Room/stopLive";
+            var roomId = _userDataService.GetRoomId();
+            var cookies = _userDataService.GetCookies();
+            var csrf = _userDataService.GetCsrfToken();
+
+            var requestform = new Dictionary<string, string>
+            {
+                ["room_id"] = roomId,
+                ["platform"] = "pc_link",
+                ["csrf_token"] = csrf,
+                ["csrf"] = csrf,
+                ["visit_id"] = ""
+            };
+            var content = new FormUrlEncodedContent(requestform);
+            var response = await _httpClientService.PostAsync("https://api.live.bilibili.com", path, content, cookies);
+
+            if (!response.IsSuccess)
+            {
+                return BizResult.AsFail(code: response.StatusCode.GetHashCode(), message: "Http通讯失败");
+            }
+            var data = response.Content;
+            if (string.IsNullOrEmpty(data))
+            {
+                return BizResult.AsFail(code: 204, message: "返回内容为空");
+            }
+            var obj = JsonSerializer.Deserialize<JsonObject>(data);
+            var code = obj?["code"]?.GetValue<int>() ?? -1;
+            var message = obj?["message"]?.GetValue<string>() ?? "";
+            if (code != 0)
+            {
+                return BizResult.AsFail(code: code, message: message);
+            }
+            return BizResult.AsSuccess();
+        }
+
+        private async Task<BizResult<LiveHimeInfo>> GetLiveHimeVersionAsync()
+        {
+            var requestform = new Dictionary<string, string>
+            {
+                ["system_version"] = "2",
+                ["ts"] = $"{DateTime.Now.ToSecondTimeStamp()}"
+            };
+            var signed = SignTool.Sign(requestform);
+            var query = string.Join("&", signed.Select(pair =>
+                $"{HttpUtility.UrlEncode(pair.Key)}={HttpUtility.UrlEncode(pair.Value)}"));
+            var response = await _httpClientService.GetAsync("https://api.live.bilibili.com", "/xlive/app-blink/v1/liveVersionInfo/getHomePageLiveVersion?" + query);
+
+            if (!response.IsSuccess)
+            {
+                return BizResult<LiveHimeInfo>.AsFail(code: response.StatusCode.GetHashCode(), message: "Http通讯失败");
+            }
+            var data = response.Content;
+            if (string.IsNullOrEmpty(data))
+            {
+                return BizResult<LiveHimeInfo>.AsFail(code: 204, message: "返回内容为空");
+            }
+            var obj = JsonSerializer.Deserialize<JsonObject>(data);
+            var code = obj?["code"]?.GetValue<int>() ?? -1;
+            var message = obj?["message"]?.GetValue<string>() ?? "";
+            if (code != 0)
+            {
+                return BizResult<LiveHimeInfo>.AsFail(code: code, message: message);
+            }
+            var version = obj?["data"]?["curr_version"]?.GetValue<string>() ?? "";
+            var build = obj?["data"]?["build"]?.GetValue<int>() ?? 0;
+
+            var info = new LiveHimeInfo(version, build.ToString());
+            return BizResult<LiveHimeInfo>.AsSuccess(info);
         }
     }
 }
