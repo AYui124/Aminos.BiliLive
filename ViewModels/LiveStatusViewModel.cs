@@ -140,6 +140,7 @@ namespace Aminos.BiliLive.ViewModels
             if (result is { Success: true, Data: not null })
             {
                 RtmpServer = result.Data;
+                await Task.Delay(1000 * 2);
                 await GetLiveStatusAsync();
             }
             else
@@ -161,6 +162,7 @@ namespace Aminos.BiliLive.ViewModels
         {
             StopLiveLoading = true;
             await _manageLiveService.StopLiveAsync();
+            await Task.Delay(1000 * 2);
             await GetLiveStatusAsync();
             RtmpServer = RtmpInfo.Default;
             StopLiveLoading = false;
